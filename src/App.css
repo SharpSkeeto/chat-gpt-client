@@ -1,5 +1,11 @@
 .App {
   text-align: center;
+  display: flex;
+  background-color: #282c34;
+  color: white;
+  position: absolute;
+  top: 0; bottom: 0; right: 0; left: 0;
+ 
 }
 
 .App-logo {
@@ -35,4 +41,172 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+html {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  -webkit-box-sizing: inherit;
+  -moz-box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+.navigation-menu {
+  width: 260px;
+  padding: 10px;
+  background-color: #202123;
+}
+
+.chat-area {
+  flex: 1;
+  background-color: #343541;
+  overflow-y: scroll;
+  height: 90%;
+}
+
+.new-chat-button {
+  padding: 12px;
+  border: 1px solid #343541;
+  font-size: small;
+  border-radius: 5px;
+  text-align: left;
+  transition: ease .25s all;
+  cursor: pointer;
+}
+
+.new-chat-button:hover {
+  background-color: rgba(255,255,255,.1);
+}
+
+.new-chat-button span {
+  padding-left: 6px;
+  padding-right: 12px;
+}
+
+.image-button-padding {
+  margin-top: 50px;
+}
+
+.chat-image {
+  height: 400px;
+  width: 400px;
+}
+
+.chat-prompt {
+  padding: 24px; 
+  position: absolute;
+  bottom: 0;
+  left: 240px;
+  right: 0;
+}
+
+.chat-textarea {
+  background-color: #40414f;
+  width: 90%;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  box-shadow: 0 0 8px 0 rgba(0,0,0,.75);
+  color: white;
+  padding: 12px;
+  font-size: 1.25em;
+}
+
+.chat-log {
+  padding: 24px;
+  text-align: left;
+}
+
+.chat-message {
+  padding: 12px;
+  padding-left: 40px;
+  padding-right: 40px;
+  display: flex;
+}
+
+.chat-message.chatgpt {
+  padding: 12px;
+  padding-left: 40px;
+  padding-right: 40px;
+  display: flex;
+  background-color: #444654;
+}
+
+.avatar {
+  background-color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.avatar.chatgpt {
+  background-color: #0da37f;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.message {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.dummy-message {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.select-model-div {
+  padding-top: 12px;
+  font-size: small;
+  text-align: left;
+}
+
+select.select-models {
+  background-color: #40414f;
+  color: white;
+  padding: 8px;
+  width: 13em;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  outline: none;
+}
+
+select.select-models option {
+  padding: 30px
+}
+
+pre {
+  white-space: pre-line;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background:#444654;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #343541;
 }
