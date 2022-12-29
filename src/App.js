@@ -1,5 +1,7 @@
-import './App.css';
+
 import { useState, useEffect, useRef } from 'react';
+import './App.css';
+import config from './config.json';
 
 function App() {
 
@@ -8,10 +10,11 @@ function App() {
   const [models, setModels] = useState([]);
   const [currentModel, setCurrentModel] = useState("text-davinci-003");
   const bottomRef = useRef(null);
-
+  const baseUri = `http://${config.hostName}:${config.port}`;
+  
   useEffect(() => {
-    getAIModels();
-  }, [])
+    getAIModels(baseUri);
+  }, [baseUri])
 
   useEffect(() => {
     // 👇️ scroll to bottom every time messages change
@@ -28,7 +31,7 @@ function App() {
     setInput("");
     setChatLog(chatLogNew)
     const messages = chatLogNew.map((message) => message.message).join("")
-    const response = await fetch("http://localhost:3080/images", {
+    const response = await fetch(`${baseUri}/images`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -39,14 +42,12 @@ function App() {
     })
     const data = await response.json();
     setChatLog([...chatLogNew, { user: "gpt", message: `${data.url}` }])
-    //console.log(data.message);
   }
 
-  function getAIModels(){
-    fetch("http://localhost:3080/models")
+  function getAIModels(baseUri){
+    fetch(`${baseUri}/models`)
     .then(res => res.json())
     .then(data => {
-      //console.log(data.data)
       setModels(data.data)
     })
   }
@@ -57,7 +58,7 @@ function App() {
     setInput("");
     setChatLog(chatLogNew)
     const messages = chatLogNew.map((message) => message.message).join("")
-    const response = await fetch("http://localhost:3080/", {
+    const response = await fetch(`${baseUri}/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -69,47 +70,46 @@ function App() {
     })
     const data = await response.json();
     setChatLog([...chatLogNew, {user: "gpt", message: `${data.message}`}])
-    //console.log(data.message);
   }
 
   return (
     <div className="App">
-    <aside className="navigation-menu">
-      <div className="new-chat-button" onClick={clearChat}>
-        <span>+</span>
-        New Chat
-      </div>
-      <div className='select-model-div'>
+      <aside className="navigation-menu">
+        <div className='select-model-div'>
           <label htmlFor="select-model">Models:</label>
-          <select id="select-model" className='select-models' value={currentModel} onChange={(e) => {
-          setCurrentModel(e.target.value)
-        }}>
-         {models.map((model, index) => (
-            <option key={model.id} value={model.id}>{model.id}</option>
+            <select id="select-model" className='select-models' value={currentModel} onChange={(e) => {
+              setCurrentModel(e.target.value)
+            }}>
+              {models.map((model, index) => (
+                <option key={model.id} value={model.id}>{model.id}</option>
+              ))}
+            </select>
+        </div>
+        <div className="new-chat-button" onClick={clearChat}>
+          <span>+</span>
+          New Chat
+        </div>
+        <div className="new-chat-button create-image-button-position" onClick={createImageRequest}>
+          <span></span>
+          Send Image Request
+        </div>
+      </aside>
+      <section className="chat-area">
+        <div className="chat-log">
+          {chatLog.map((message, index) => (
+            <ChatMessage key={index} message={message} bottomRef={bottomRef} />
           ))}
-        </select>
-      </div>
-        <div className="new-chat-button image-button-padding" onClick={createImageRequest}>
-        <span></span>
-        Send Image Request
-      </div>
-    </aside>
-    <section className="chat-area">
-      <div className="chat-log">
-        {chatLog.map((message, index) => (
-          <ChatMessage key={index} message={message} bottomRef={bottomRef} />
-        ))}
-      </div>
-      <div className="chat-prompt">
-        <form onSubmit={formHandler}>
-          <input className="chat-textarea" 
-                 placeholder="Type your query here..." 
-                 value={input}
-                 onChange={(e) => setInput(e.target.value)}
-          />
-        </form>
-      </div>
-    </section>
+        </div>
+        <div className="chat-prompt">
+          <form onSubmit={formHandler}>
+            <input className="chat-textarea" 
+                   placeholder="Type your query here..." 
+                   value={input}
+                   onChange={(e) => setInput(e.target.value)}
+            />
+          </form>
+        </div>
+      </section>
   </div>
   );
 }
@@ -120,8 +120,8 @@ const ChatMessage = ({ message, bottomRef }) => {
       <div className={`avatar ${message.user === "gpt" ? "chatgpt" : ""}`}>
           {message.user === "gpt" ? 
           <svg
-            width={41}
-            height={41}
+            width={40}
+            height={40}
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             strokeWidth={1.5}
@@ -148,6 +148,4 @@ const ChatMessage = ({ message, bottomRef }) => {
   )
 }
 
-
 export default App;
-
