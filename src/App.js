@@ -1,5 +1,6 @@
 
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+//import { findDOMNode } from 'react-dom';
 import './App.css';
 import config from './config.json';
 
@@ -10,11 +11,16 @@ function App() {
   const [models, setModels] = useState([]);
   const [currentModel, setCurrentModel] = useState("text-davinci-003");
   const bottomRef = useRef(null);
+  const inputRef = useRef(null);
   const baseUri = `http://${config.hostName}:${config.port}`;
   
   useEffect(() => {
     getAIModels(baseUri);
-  }, [baseUri])
+  }, [baseUri]);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   useEffect(() => {
     // 👇️ scroll to bottom every time messages change
@@ -26,22 +32,20 @@ function App() {
   }
 
   async function createImageRequest() {
-    clearChat()
-    let chatLogNew = [...chatLog, { user: "me", message: `${input}` }]
+    let chatLogNew = [...chatLog, { user: "me", message: `${input}` }];
     setInput("");
-    setChatLog(chatLogNew)
-    const messages = chatLogNew.map((message) => message.message).join("")
+    setChatLog(chatLogNew);
     const response = await fetch(`${baseUri}/images`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        message: messages,
+        message: input,
       })
-    })
+    });
     const data = await response.json();
-    setChatLog([...chatLogNew, { user: "gpt", message: `${data.url}` }])
+    setChatLog([...chatLogNew, { user: "gpt", message: `${data.url}` }]);
   }
 
   function getAIModels(baseUri){
@@ -49,15 +53,29 @@ function App() {
     .then(res => res.json())
     .then(data => {
       setModels(data.data)
-    })
+    });
   }
 
   async function formHandler(e){
     e.preventDefault();
-    let chatLogNew = [...chatLog, { user: "me", message: `${input}`}]
+    //findDOMNode(inputRef.current).focus();
+    inputRef.current?.focus();
+    var messages = "";
+    let chatLogNew = [...chatLog, { user: "me", message: `${input}`}];
     setInput("");
-    setChatLog(chatLogNew)
-    const messages = chatLogNew.map((message) => message.message).join("")
+    setChatLog(chatLogNew);
+    
+    // for prompt length, dont want to go over prompt max-length, if it is a lengthy convo
+    if (chatLogNew.length > 5)
+    {
+      const recentPrompts = [...chatLogNew.slice(1)];
+      messages = recentPrompts.map((message) => message.message).join("\n");
+    }
+    else
+    {
+      messages = chatLogNew.map((message) => message.message).join("\n");
+    }
+   
     const response = await fetch(`${baseUri}/`, {
       method: "POST",
       headers: {
@@ -67,9 +85,9 @@ function App() {
         message: messages,
         currentModel 
       })
-    })
+    });
     const data = await response.json();
-    setChatLog([...chatLogNew, {user: "gpt", message: `${data.message}`}])
+    setChatLog([...chatLogNew, {user: "gpt", message: `${data.message}`}]);
   }
 
   return (
@@ -104,6 +122,7 @@ function App() {
           <form onSubmit={formHandler}>
             <input className="chat-textarea" 
                    placeholder="Type your query here..." 
+                   ref={inputRef}
                    value={input}
                    onChange={(e) => setInput(e.target.value)}
             />

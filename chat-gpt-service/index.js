@@ -38,7 +38,7 @@ app.post('/', async (req, res) => {
         model: `${currentModel}`,
         prompt: `${message}`,
         max_tokens: 100,        //max(2048), newer models can go up to (4096)
-        temperature: 0,         //0 (well defined) to .9 (creative)
+        temperature: .5,         //0 (well defined) to .9 (creative)
         top_p: 1,               //0.1 (10%) to 1 (100%)
         n : 1,
         stream: false,
