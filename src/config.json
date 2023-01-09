@@ -1,4 +1,4 @@
 {
     "port": 3001,
-    "hostName": "localhost"
+    "hostName": "192.168.1.75"
 }
